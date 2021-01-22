@@ -1,5 +1,5 @@
 # Sort Visual
-A React app to visualize/analyse sorting on the UI. 
+A React app to visualize/analyse various sorting algorithms on the UI. 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
