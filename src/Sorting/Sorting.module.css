@@ -1,0 +1,134 @@
+.header{
+    font-size: 1rem;;
+    background-color: whitesmoke;
+    padding:0 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+.headerCombined{
+    display: flex;
+}
+.secHeader{
+    font-size: 0.8rem;
+    background-color:rgb(236, 236, 236);
+    padding:0;
+    display: flex;
+    justify-content: space-between;
+    flex-basis: 100%;
+}
+button{
+    padding:0.5rem 2rem;
+    -webkit-appearance: none;
+    background-color: #2F80ED;
+    color:white;
+    box-shadow: none;
+    border:0;
+    border-radius: 0.25rem;
+}
+button.buttonDestructive{
+    background-color: #EB5757;
+    color:white;
+    display: flex;
+    align-items: center;
+}
+button.buttonDestructive *{
+color:white;
+}
+button + button {
+    margin-left:0.5rem;
+}
+button:disabled{
+  
+    background-color: grey;
+   
+}
+.iconLabel{
+    padding-left:0.5rem;
+}
+.bold{
+    font-weight: bold;
+}
+
+.headerRow{
+    display:flex;
+    align-items: center;
+    position: relative;
+}
+.headerRow .bold{
+   padding:1.5rem 1rem;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+}
+.headerRow .arrow{
+    font-size: 1rem;
+    margin-left:0.75rem;
+
+}
+.headerRow .arrow[data-class='up']{
+    transform: rotate(180deg);
+}
+.headerRow .bold:hover{
+    background-color: whitesmoke;
+}
+.headerRow + .headerRow{
+    padding-left: 3rem;
+}
+.headerRow > span + span{
+   padding-left: 0.5rem;
+}
+.headerRow > span:last-child{
+   display: flex;
+   align-items: center;
+   padding-left: 1rem;
+ }
+
+ .radioInputWrapper{
+     display: flex;
+     align-items: center;
+     flex-wrap: wrap;
+     position: absolute;
+     background: whitesmoke;
+
+     width: 9.7rem;
+     left: 0;
+     top: 4rem;
+ }
+ .radioInputWrapper input + span{
+    padding-left: 0.3rem;
+}
+
+.input{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    padding:0.75rem 1rem;
+    cursor:pointer;
+}
+
+.input:hover{
+    background-color: lightgrey;
+}
+
+.row{
+    background-color: #2F80ED;
+    border:1px solid #56CCF2;
+    width: 10px;
+    /* transition : all 1s linear; */
+}
+.sortVisual{
+    display: flex;
+    justify-content: center;
+}
+.sortTime{
+    position: fixed;
+    bottom: 1rem;
+    right:1rem;
+}
+.rangeValueText{
+    padding-left: 0.5rem;
+    font-weight: bold;
+}
+

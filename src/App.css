@@ -1,7 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Grandstander:wght@100;400;700&display=swap');
+
 .App {
   text-align: center;
 }
 
+* {
+  font-family: 'Grandstander', cursive;
+  color:#333333;
+  padding:0;
+  margin:0;
+  box-sizing: content-box;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

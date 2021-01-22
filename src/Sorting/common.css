@@ -1,0 +1,25 @@
+.blink-red{
+    animation :blink-red 1s linear;
+}
+.blink-yellow{
+    animation :blink-yellow 1s linear;
+}
+
+@keyframes blink-yellow{
+    0%{
+        background-color: yellow;
+    }
+    100%{
+        background-color: #2F80ED;
+    }
+}
+
+@keyframes blink-red{
+    0%{
+        background-color:#EB5757;
+    }
+    100%{
+        background-color: #2F80ED;
+    }
+}
+
