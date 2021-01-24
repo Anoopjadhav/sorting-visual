@@ -47,11 +47,11 @@ class animationClass {
                 this.queue.push(this.updateHeight(element1, value1, element2, value2));
                 this.queue.push(this.changeBgColor(element1, '#56CCF2'));
                 return;
-            case 'changeBgColorForAll' : 
+            case 'changeBgColorForAll':
                 //***IMP***element1 == elements && value1 == color as parameters
                 let elementRefs = element1;
                 let color = value1;
-                elementRefs.forEach(ele=>{
+                elementRefs.forEach(ele => {
                     this.queue.push(this.changeBgColor(ele, color))
                 })
 
@@ -177,7 +177,8 @@ const Sorting = () => {
         setSortData(sortData);
 
         for (let i = 0; i < elRefs.current.length; i++) {
-            elRefs.current[i].style.backgroundColor = defaultBackgroundColor;
+            if (elRefs.current[i])
+                elRefs.current[i].style.backgroundColor = defaultBackgroundColor;
         }
 
         //clear timers
@@ -218,7 +219,7 @@ const Sorting = () => {
             bubbleSort(animationObj);
         } else if (selectedSort === 'Insertion') {
             insertionSort(animationObj);
-            animationObj.addAnimation('changeBgColorForAll',elRefs.current,'#56CCF2')
+            animationObj.addAnimation('changeBgColorForAll', elRefs.current, '#56CCF2')
         }
 
         let endTime = new Date();
@@ -269,7 +270,7 @@ const Sorting = () => {
                 k--;
             }
             tempSortData[k + 1] = key;
-            if (animationObj){
+            if (animationObj) {
                 animationObj.addAnimation('updateHeight', elRefs.current[k + 1], key);
             }
         }
