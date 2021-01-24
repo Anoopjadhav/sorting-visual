@@ -182,8 +182,6 @@ const Sorting = () => {
     function slowDownRangeHandler(evt) {
         let targetValue = evt.currentTarget.value;
         setTimerIncrement(parseInt(targetValue));
-
-        resetData();
     }
 
     function resetData() {
