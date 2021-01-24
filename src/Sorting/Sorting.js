@@ -20,6 +20,9 @@ class animationClass {
         this.animationDelay = animationDelay;
         this.queue = [];
     }
+    setDelay(animationDelay){
+        this.animationDelay = animationDelay;
+    }
 
     addAnimation(type, element1, value1, element2, value2) {
         switch (type) {
@@ -105,6 +108,7 @@ const Sorting = () => {
     let [showDropDown, setShowDropDown] = useState(false);
     let [sortTime, setSortTime] = useState(0);
     let [timerIncrement, setTimerIncrement] = useState(0);
+    let [animationObj,setAnimationObj] = useState();
     let elRefs = useRef([]);
 
     useEffect(() => {
@@ -134,8 +138,8 @@ const Sorting = () => {
         setButtonDisabled(false);
         setTimerIncrement(defaultSlowDown);
 
-
         setSelectedSort(defaultSortType);
+        setAnimationObj(new animationClass(timerIncrement));
 
     }, [])
 
@@ -145,7 +149,6 @@ const Sorting = () => {
     }, [range]);
 
     useEffect(() => {
-
     }, [sortData]);
 
 
@@ -182,6 +185,11 @@ const Sorting = () => {
     function slowDownRangeHandler(evt) {
         let targetValue = evt.currentTarget.value;
         setTimerIncrement(parseInt(targetValue));
+
+        let tempAnimationObj = animationObj;
+        tempAnimationObj.setDelay(targetValue);
+
+        setAnimationObj(tempAnimationObj);
     }
 
     function resetData() {
@@ -226,7 +234,7 @@ const Sorting = () => {
         let startTime = new Date();
 
         //init animation obj
-        let animationObj = new animationClass(timerIncrement);
+       
 
         if (selectedSort === 'Bubble') {
             bubbleSort(animationObj);
@@ -362,10 +370,10 @@ const Sorting = () => {
 
                     </div>
                     <div className={styles.headerRow}>
-                        <span className={styles.bold}>Slow down</span>
+                        <span className={styles.bold}>Animation Delay(ms)</span>
 
                         <div className={styles.rangeInputWrapper}>
-                            <input type="range" id="data-range" name="dataRange" min="0" max="50" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{timerIncrement}</span>
+                            <input type="range" id="data-range" name="dataRange" min="0" max="100" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{timerIncrement}</span>
                         </div>
 
                     </div>
