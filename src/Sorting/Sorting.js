@@ -5,6 +5,7 @@ import getRandomValue from './randomValueGenerator'
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SortIcon from '@material-ui/icons/Sort';
 
+const defaultSortType = 'Bubble'
 const defaultBackgroundColor = "#2F80ED";
 const defaultSlowDown = 0;
 const defaultRange = 50;
@@ -98,6 +99,7 @@ const Sorting = () => {
 
     let [sortTypes, setSortTypes] = useState('');
     let [sortData, setSortData] = useState([]);
+    let [selectedSort, setSelectedSort] = useState('');
     let [range, setRange] = useState(0);
     let [buttonDisabled, setButtonDisabled] = useState(false);
     let [showDropDown, setShowDropDown] = useState(false);
@@ -132,6 +134,9 @@ const Sorting = () => {
         setButtonDisabled(false);
         setTimerIncrement(defaultSlowDown);
 
+
+        setSelectedSort(defaultSortType);
+
     }, [])
 
     useEffect(() => {
@@ -146,10 +151,12 @@ const Sorting = () => {
 
     function handleSortSelectChange(evt) {
         let element = evt.currentTarget;
+        let selectedSort = '';
         element.focus();
         let targetEvt = element.dataset.id;
         let tempSortTypes = sortTypes.map(ele => {
             if (ele.name === targetEvt) {
+                selectedSort = ele.name;
                 ele.checked = true;
                 setButtonDisabled(false);
             } else {
@@ -161,10 +168,22 @@ const Sorting = () => {
             tempSortTypes
         )
 
+        setSelectedSort(selectedSort);
+        resetData();
+
     }
     function rangeHandler(evt) {
         let targetValue = evt.currentTarget.value;
         setRange(targetValue);
+
+        resetData();
+    }
+
+    function slowDownRangeHandler(evt) {
+        let targetValue = evt.currentTarget.value;
+        setTimerIncrement(parseInt(targetValue));
+
+        resetData();
     }
 
     function resetData() {
@@ -189,11 +208,6 @@ const Sorting = () => {
         }
     }
 
-    function slowDownRangeHandler(evt) {
-        let targetValue = evt.currentTarget.value;
-        setTimerIncrement(parseInt(targetValue));
-    }
-
     function getSelectedSort() {
         let selectedSort = '';
         sortTypes.forEach(ele => {
@@ -208,6 +222,7 @@ const Sorting = () => {
         // console.log('sorting started')
         let selectedSort = getSelectedSort();
 
+        setSelectedSort(selectedSort);
         //init time
         setSortTime(0);
         let startTime = new Date();
@@ -290,7 +305,6 @@ const Sorting = () => {
         }
     }
     function testSort() {
-        let selectedSort = getSelectedSort();
 
         let sortedData = sortData.sort((a, b) => { return a - b });
 
@@ -324,6 +338,7 @@ const Sorting = () => {
                         <span className={styles.bold} onClick={toggleDropDown}>
                             Select Sort Type
                             <div className={styles.arrow} data-class={showDropDown ? 'up' : 'down'}>^</div>
+                            <div className={styles.selectedSort}>{selectedSort}</div>
                         </span>
                         {
                             showDropDown && <div className={styles.radioInputWrapper} >
@@ -342,19 +357,19 @@ const Sorting = () => {
                     </div>
                     <div className={styles.headerRow}>
                         <span className={styles.bold}>Select Dataset </span>
-                        <span>
-                            <div className={styles.rangeInputWrapper}>
-                                <input type="range" id="data-range" name="dataRange" min="50" max="300" value={range} onChange={rangeHandler}></input><span className={styles.rangeValueText}>{range + ' items'}</span>
-                            </div>
-                        </span>
+
+                        <div className={styles.rangeInputWrapper}>
+                            <input type="range" id="data-range" name="dataRange" min="50" max="300" value={range} onChange={rangeHandler}></input><span className={styles.rangeValueText}>{range + ' items'}</span>
+                        </div>
+
                     </div>
                     <div className={styles.headerRow}>
                         <span className={styles.bold}>Slow down</span>
-                        <span>
-                            <div className={styles.rangeInputWrapper}>
-                                <input type="range" id="data-range" name="dataRange" min="0" max="10" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{(11 - timerIncrement) / 10 + 'x'}</span>
-                            </div>
-                        </span>
+
+                        <div className={styles.rangeInputWrapper}>
+                            <input type="range" id="data-range" name="dataRange" min="0" max="50" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{timerIncrement}</span>
+                        </div>
+
                     </div>
                     <div className={styles.headerRow}>
                         <button className={styles.buttonDestructive} onClick={resetData}><RefreshIcon style={{ color: 'white', fontSize: 16 }}></RefreshIcon><span className={styles.iconLabel}>Reset</span></button>
@@ -378,7 +393,8 @@ const Sorting = () => {
             </div>
             <div className={styles.footer}>
                 <div className={styles.sortTime}>
-                    <button onClick={testSort}>Test Sort</button><span>Time Taken by actual sort: </span> <span><b>{sortTime + ' milliseconds'}</b></span>
+                    {/* <button onClick={testSort}>Test Sort</button> */}
+                    <span>Time Taken by actual sort: </span> <span><b>{sortTime + ' milliseconds'}</b></span>
                 </div>
 
             </div>

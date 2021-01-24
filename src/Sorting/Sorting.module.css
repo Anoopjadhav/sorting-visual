@@ -129,9 +129,20 @@ button:disabled{
     position: fixed;
     bottom: 1rem;
     right:1rem;
+    font-size: 0.8rem;
 }
 .rangeValueText{
     padding-left: 0.5rem;
     font-weight: bold;
+}
+
+.selectedSort{
+    position: absolute;
+    top:2.5rem;
+    font-weight: normal;
+}
+.rangeInputWrapper{
+    display:flex;
+    align-items: center;
 }
 
