@@ -23,7 +23,7 @@ class animationClass {
     addAnimation(type, element1, value1, element2, value2) {
         switch (type) {
             case 'swapPosition':
-                console.log('swap position');
+                // console.log('swap position');
                 //hightlight bg 
                 this.queue.push(this.changeBgColor(element1, 'yellow', element2, 'yellow'))
                 this.queue.push(this.changeBgColor(element1, this.defaultBgColor, element2, this.defaultBgColor))
@@ -33,8 +33,28 @@ class animationClass {
                 return;
 
             case 'changeBgColor':
-                console.log('Change Bg Color');
+                // console.log('Change Bg Color');
                 this.queue.push(this.changeBgColor(element1, value1));
+                return;
+
+            case 'updateHeight':
+                //swap element heights
+                this.queue.push(this.updateHeight(element1, value1, element2, value2));
+                return;
+
+            case 'updateHeightAndMarkSorted':
+                //swap element heights
+                this.queue.push(this.updateHeight(element1, value1, element2, value2));
+                this.queue.push(this.changeBgColor(element1, '#56CCF2'));
+                return;
+            case 'changeBgColorForAll' : 
+                //***IMP***element1 == elements && value1 == color as parameters
+                let elementRefs = element1;
+                let color = value1;
+                elementRefs.forEach(ele=>{
+                    this.queue.push(this.changeBgColor(ele, color))
+                })
+
                 return;
             default: return;
         }
@@ -51,13 +71,14 @@ class animationClass {
 
     updateHeight(element1, value1, element2, value2) {
         return () => {
-            console.log('Height Changed')
+            // console.log('Height Changed')
 
             element1.style.height = value1 + 'px';
             if (element2 !== undefined)
                 element2.style.height = value2 + 'px';
         }
     }
+
     isEmpty() {
         return this.queue.length > 0 ? false : true;
     }
@@ -155,7 +176,7 @@ const Sorting = () => {
 
         setSortData(sortData);
 
-        for(let i=0;i<elRefs.current.length;i++){
+        for (let i = 0; i < elRefs.current.length; i++) {
             elRefs.current[i].style.backgroundColor = defaultBackgroundColor;
         }
 
@@ -172,69 +193,87 @@ const Sorting = () => {
         setTimerIncrement(parseInt(targetValue));
     }
 
-    function startSort() {
-        console.log('sorting started')
+    function getSelectedSort() {
         let selectedSort = '';
         sortTypes.forEach(ele => {
             if (ele.checked === true) {
                 selectedSort = ele.name;
             }
         });
+        return selectedSort;
+    }
 
+    function startSort() {
+        // console.log('sorting started')
+        let selectedSort = getSelectedSort();
+
+        //init time
         setSortTime(0);
         let startTime = new Date();
 
-
+        //init animation obj
         let animationObj = new animationClass(timerIncrement);
 
-
         if (selectedSort === 'Bubble') {
-
-            let tempSortData = [...sortData];
-            for (let i = 0; i < tempSortData.length; i++) {
-                let j = 0;
-                for (j = 0; j < tempSortData.length - i; j++) {
-
-                    if (tempSortData[j] > tempSortData[j + 1]) {
-                        let temp = tempSortData[j];
-                        tempSortData[j] = tempSortData[j + 1];
-                        tempSortData[j + 1] = temp;
-
-                        animationObj.addAnimation('swapPosition', elRefs.current[j], tempSortData[j], elRefs.current[j + 1], tempSortData[j + 1])
-
-                    }
-
-                }
-
-                animationObj.addAnimation('changeBgColor', elRefs.current[j - 1], '#56CCF2')
-
-            }
-
-
+            bubbleSort(animationObj);
         } else if (selectedSort === 'Insertion') {
-            let tempSortData = [...sortData];
-
-            for (let i = 1; i < tempSortData.length; i++) {
-
-                let key = tempSortData[i];
-                let k = i - 1;
-
-                while (k >= 0 && tempSortData[k] > key) {
-
-                    tempSortData[k + 1] = tempSortData[k];
-                    k--;
-                }
-                tempSortData[k + 1] = key;
-            }
-            // setSortData(tempSortData);
+            insertionSort(animationObj);
+            animationObj.addAnimation('changeBgColorForAll',elRefs.current,'#56CCF2')
         }
-        
+
         let endTime = new Date();
         setSortTime(endTime - startTime);
 
         //Run all animations
         animationObj.animate()
 
+    }
+
+    function bubbleSort(animationObj) {
+        let tempSortData = [...sortData];
+        for (let i = 0; i < tempSortData.length; i++) {
+            let j = 0;
+            for (j = 0; j < tempSortData.length - i; j++) {
+
+                if (tempSortData[j] > tempSortData[j + 1]) {
+                    let temp = tempSortData[j];
+                    tempSortData[j] = tempSortData[j + 1];
+                    tempSortData[j + 1] = temp;
+
+                    if (animationObj)
+                        animationObj.addAnimation('swapPosition', elRefs.current[j], tempSortData[j], elRefs.current[j + 1], tempSortData[j + 1])
+
+                }
+
+            }
+            if (animationObj)
+                animationObj.addAnimation('changeBgColor', elRefs.current[j - 1], '#56CCF2')
+        }
+
+        return tempSortData;
+    }
+
+    function insertionSort(animationObj) {
+        let tempSortData = [...sortData];
+
+        for (let i = 1; i < tempSortData.length; i++) {
+
+            let key = tempSortData[i];
+            let k = i - 1;
+
+            while (k >= 0 && tempSortData[k] > key) {
+
+                tempSortData[k + 1] = tempSortData[k];
+                if (animationObj)
+                    animationObj.addAnimation('swapPosition', elRefs.current[k + 1], tempSortData[k], elRefs.current[k + 1], tempSortData[k + 1])
+                k--;
+            }
+            tempSortData[k + 1] = key;
+            if (animationObj){
+                animationObj.addAnimation('updateHeight', elRefs.current[k + 1], key);
+            }
+        }
+        return tempSortData
     }
 
     function toggleDropDown() {
@@ -248,6 +287,31 @@ const Sorting = () => {
         if (!(classList.includes('radio') || classList.includes('input'))) {
             setShowDropDown(false)
         }
+    }
+    function testSort() {
+        let selectedSort = getSelectedSort();
+
+        let sortedData = sortData.sort((a, b) => { return a - b });
+
+        let algoSortedData = [];
+        if (selectedSort === 'Bubble') {
+            algoSortedData = bubbleSort();
+        } else if (selectedSort === 'Insertion') {
+            algoSortedData = insertionSort();
+            console.log(algoSortedData)
+        }
+
+        let result = checkIfArrEqual(sortedData, algoSortedData);
+        alert(result);
+
+    }
+    function checkIfArrEqual(arr1, arr2) {
+        let flag = true;
+        if (arr1.length !== arr1.length) return false;
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) flag = false;
+        }
+        return flag;
     }
 
     return (
@@ -313,8 +377,9 @@ const Sorting = () => {
             </div>
             <div className={styles.footer}>
                 <div className={styles.sortTime}>
-                    <span>Time Taken by actual sort: </span> <span><b>{sortTime + ' milliseconds'}</b></span>
+                    <button onClick={testSort}>Test Sort</button><span>Time Taken by actual sort: </span> <span><b>{sortTime + ' milliseconds'}</b></span>
                 </div>
+
             </div>
         </div>
     )
