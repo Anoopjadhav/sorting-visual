@@ -1,5 +1,5 @@
 .header{
-    font-size: 1rem;;
+    font-size: 0.8rem;
     background-color: whitesmoke;
     padding:0 1rem;
     font-weight: bold;
@@ -45,7 +45,7 @@ button:disabled{
    
 }
 .iconLabel{
-    padding-left:0.5rem;
+    padding-left:0;
 }
 .bold{
     font-weight: bold;
@@ -57,10 +57,12 @@ button:disabled{
     position: relative;
 }
 .headerRow .bold{
-   padding:1.5rem 1rem;
+   padding:0.5rem 1rem;
    cursor: pointer;
    display: flex;
    align-items: center;
+   text-align: left;
+
 }
 .headerRow .arrow{
     font-size: 1rem;
@@ -94,7 +96,7 @@ button:disabled{
 
      width: 9.7rem;
      left: 0;
-     top: 4rem;
+     top: 2.6rem;
  }
  .radioInputWrapper input + span{
     padding-left: 0.3rem;
@@ -137,8 +139,7 @@ button:disabled{
 }
 
 .selectedSort{
-    position: absolute;
-    top:2.5rem;
+    padding-top: 0.2rem;
     font-weight: normal;
 }
 .rangeInputWrapper{

@@ -69,15 +69,16 @@ class animationClass {
             if (element2 !== undefined) {
                 element2.style.backgroundColor = color2;
             }
-            element1.style.backgroundColor = color1;
+            if (element1 !== undefined)
+                element1.style.backgroundColor = color1;
         }
     }
 
     updateHeight(element1, value1, element2, value2) {
         return () => {
             // console.log('Height Changed')
-
-            element1.style.height = value1 + 'px';
+            if (element1 !== undefined)
+                element1.style.height = value1 + 'px';
             if (element2 !== undefined)
                 element2.style.height = value2 + 'px';
         }
@@ -342,9 +343,12 @@ const Sorting = () => {
                 <div className={styles.secHeader}>
                     <div className={styles.headerRow}>
                         <span className={styles.bold} onClick={toggleDropDown}>
-                            Select Sort Type
+                            <div>
+                                <span>Select Sort Type</span>
+                                <div className={styles.selectedSort}>{selectedSort}</div>
+                            </div>
                             <div className={styles.arrow} data-class={showDropDown ? 'up' : 'down'}>^</div>
-                            <div className={styles.selectedSort}>{selectedSort}</div>
+                           
                         </span>
                         {
                             showDropDown && <div className={styles.radioInputWrapper} >
@@ -370,7 +374,7 @@ const Sorting = () => {
 
                     </div>
                     <div className={styles.headerRow}>
-                        <span className={styles.bold}>Animation Delay(ms)</span>
+                        <span className={styles.bold}>Animation Delay (ms)</span>
 
                         <div className={styles.rangeInputWrapper}>
                             <input type="range" id="data-range" name="dataRange" min="0" max="100" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{timerIncrement}</span>
