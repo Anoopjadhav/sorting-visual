@@ -16,6 +16,7 @@
     display: flex;
     justify-content: space-between;
     flex-basis: 100%;
+    padding-right:0.5rem;
 }
 button{
     padding:0.5rem 2rem;
@@ -73,7 +74,7 @@ button:disabled{
     background-color: whitesmoke;
 }
 .headerRow + .headerRow{
-    padding-left: 3rem;
+    padding-left: 2rem;
 }
 .headerRow > span + span{
    padding-left: 0.5rem;
@@ -114,9 +115,11 @@ button:disabled{
 
 .row{
     background-color: #2F80ED;
-    border:1px solid #56CCF2;
-    width: 10px;
-    /* transition : all 1s linear; */
+    width: 2px;
+    /* transition : height 1s linear; */
+}
+.row + .row{
+   margin-left:2px;
 }
 .sortVisual{
     display: flex;

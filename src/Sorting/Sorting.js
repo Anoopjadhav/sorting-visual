@@ -4,6 +4,75 @@ import './common.css'
 import getRandomValue from './randomValueGenerator'
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SortIcon from '@material-ui/icons/Sort';
+
+const defaultBackgroundColor = "#2F80ED";
+const defaultSlowDown = 0;
+const defaultRange = 50;
+class animationClass {
+
+    constructor(animationDelay, defaultBgColor) {
+        if (defaultBgColor !== undefined) {
+            this.defaultBgColor = defaultBgColor;
+        } else {
+            this.defaultBgColor = defaultBackgroundColor;
+        }
+        this.animationDelay = animationDelay;
+        this.queue = [];
+    }
+
+    addAnimation(type, element1, value1, element2, value2) {
+        switch (type) {
+            case 'swapPosition':
+                console.log('swap position');
+                //hightlight bg 
+                this.queue.push(this.changeBgColor(element1, 'yellow', element2, 'yellow'))
+                this.queue.push(this.changeBgColor(element1, this.defaultBgColor, element2, this.defaultBgColor))
+
+                //swap element heights
+                this.queue.push(this.updateHeight(element1, value1, element2, value2));
+                return;
+
+            case 'changeBgColor':
+                console.log('Change Bg Color');
+                this.queue.push(this.changeBgColor(element1, value1));
+                return;
+            default: return;
+        }
+    }
+
+    changeBgColor(element1, color1, element2, color2) {
+        return () => {
+            if (element2 !== undefined) {
+                element2.style.backgroundColor = color2;
+            }
+            element1.style.backgroundColor = color1;
+        }
+    }
+
+    updateHeight(element1, value1, element2, value2) {
+        return () => {
+            console.log('Height Changed')
+
+            element1.style.height = value1 + 'px';
+            if (element2 !== undefined)
+                element2.style.height = value2 + 'px';
+        }
+    }
+    isEmpty() {
+        return this.queue.length > 0 ? false : true;
+    }
+    pop() {
+        return this.queue.shift();
+    }
+    animate() {
+        if (!this.isEmpty()) {
+            this.pop()();
+            setTimeout(() => {
+                this.animate();
+            }, this.animationDelay);
+        }
+    }
+}
 const Sorting = () => {
 
     let [sortTypes, setSortTypes] = useState('');
@@ -38,9 +107,9 @@ const Sorting = () => {
             }
         ])
 
-        setRange(50);
+        setRange(defaultRange);
         setButtonDisabled(false);
-        setTimerIncrement(5);
+        setTimerIncrement(defaultSlowDown);
 
     }, [])
 
@@ -50,6 +119,7 @@ const Sorting = () => {
     }, [range]);
 
     useEffect(() => {
+
     }, [sortData]);
 
 
@@ -69,7 +139,7 @@ const Sorting = () => {
         setSortTypes(
             tempSortTypes
         )
-       
+
     }
     function rangeHandler(evt) {
         let targetValue = evt.currentTarget.value;
@@ -82,8 +152,12 @@ const Sorting = () => {
             // sortData.push(range - i);
             sortData.push(getRandomValue.next().value)
         }
+
         setSortData(sortData);
 
+        for(let i=0;i<elRefs.current.length;i++){
+            elRefs.current[i].style.backgroundColor = defaultBackgroundColor;
+        }
 
         //clear timers
         var id = window.setTimeout(function () { }, 0);
@@ -97,7 +171,9 @@ const Sorting = () => {
         let targetValue = evt.currentTarget.value;
         setTimerIncrement(parseInt(targetValue));
     }
+
     function startSort() {
+        console.log('sorting started')
         let selectedSort = '';
         sortTypes.forEach(ele => {
             if (ele.checked === true) {
@@ -107,85 +183,69 @@ const Sorting = () => {
 
         setSortTime(0);
         let startTime = new Date();
-        let timer = 0;
+
+
+        let animationObj = new animationClass(timerIncrement);
+
 
         if (selectedSort === 'Bubble') {
 
             let tempSortData = [...sortData];
             for (let i = 0; i < tempSortData.length; i++) {
-                for (let j = 0; j < tempSortData.length - i; j++) {
+                let j = 0;
+                for (j = 0; j < tempSortData.length - i; j++) {
 
-                    timer += timerIncrement;
-                    console.log(timer);
-                    setTimeout(() => {
+                    if (tempSortData[j] > tempSortData[j + 1]) {
+                        let temp = tempSortData[j];
+                        tempSortData[j] = tempSortData[j + 1];
+                        tempSortData[j + 1] = temp;
 
-                        if (tempSortData[j] > tempSortData[j + 1]) {
+                        animationObj.addAnimation('swapPosition', elRefs.current[j], tempSortData[j], elRefs.current[j + 1], tempSortData[j + 1])
 
-                            hightlightComparedValues(j, j + 1);
-
-                            let temp = tempSortData[j];
-
-                            tempSortData[j] = tempSortData[j + 1];
-                            elRefs.current[j].style.height = tempSortData[j + 1] + 'px';
-
-                            tempSortData[j + 1] = temp;
-                            elRefs.current[j + 1].style.height = temp + 'px';
-                        }
-
-                    }, timer);
+                    }
 
                 }
 
+                animationObj.addAnimation('changeBgColor', elRefs.current[j - 1], '#56CCF2')
+
             }
-            // setSortData(tempSortData);
+
 
         } else if (selectedSort === 'Insertion') {
             let tempSortData = [...sortData];
 
-            for (let i = 0; i < tempSortData.length; i++) {
+            for (let i = 1; i < tempSortData.length; i++) {
 
                 let key = tempSortData[i];
-                let k = i + 1;
+                let k = i - 1;
 
-                while (k >= 0 && tempSortData[k] < key) {
-                    setTimeout(() => {
-                        hightlightComparedValues(k, k + 1);
-                        tempSortData[k + 1] = tempSortData[k];
-                    }, timer);
+                while (k >= 0 && tempSortData[k] > key) {
 
+                    tempSortData[k + 1] = tempSortData[k];
                     k--;
                 }
-
                 tempSortData[k + 1] = key;
             }
-
+            // setSortData(tempSortData);
         }
-
-
-
+        
         let endTime = new Date();
         setSortTime(endTime - startTime);
+
+        //Run all animations
+        animationObj.animate()
+
     }
 
-    function hightlightComparedValues(i, j) {
-        elRefs.current[i].classList.add('blink-red');
-        elRefs.current[j].classList.add('blink-yellow');
-        setTimeout(
-            () => {
-                elRefs.current[i].classList.remove('blink-red');
-                elRefs.current[j].classList.remove('blink-yellow');
-            }, 10
-        )
-    }
-    function toggleDropDown(){
+    function toggleDropDown() {
         setShowDropDown(!showDropDown)
     }
 
-    function closeDropDown(evt){
+    function closeDropDown(evt) {
         let ele = evt.currentTarget;
-       let classList = [...ele.classList];
-      
-        if(!(classList.includes('radio') || classList.includes('input'))){
+        let classList = [...ele.classList];
+
+        if (!(classList.includes('radio') || classList.includes('input'))) {
             setShowDropDown(false)
         }
     }
@@ -197,29 +257,29 @@ const Sorting = () => {
                 <div className={styles.secHeader}>
                     <div className={styles.headerRow}>
                         <span className={styles.bold} onClick={toggleDropDown}>
-                            Select Sort Type 
-                            <div className={styles.arrow} data-class={ showDropDown ? 'up': 'down'}>^</div>
+                            Select Sort Type
+                            <div className={styles.arrow} data-class={showDropDown ? 'up' : 'down'}>^</div>
                         </span>
                         {
                             showDropDown && <div className={styles.radioInputWrapper} >
-                                    {
-                                        sortTypes && sortTypes.map((ele, index) => {
-                                            return (
-                                                <div key={index} className={styles.input + " input"} data-id={ele.name} onClick={handleSortSelectChange} onBlur={closeDropDown}>
-                                                    <input className="radio" name="sort" type="radio" data-id={ele.name} value={ele.name} checked={ele.checked} onChange={handleSortSelectChange} onBlur={closeDropDown}></input><span>{ele.name}</span>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
-                           
+                                {
+                                    sortTypes && sortTypes.map((ele, index) => {
+                                        return (
+                                            <div key={index} className={styles.input + " input"} data-id={ele.name} onClick={handleSortSelectChange} onBlur={closeDropDown}>
+                                                <input className="radio" name="sort" type="radio" data-id={ele.name} value={ele.name} checked={ele.checked} onChange={handleSortSelectChange} onBlur={closeDropDown}></input><span>{ele.name}</span>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+
                         }
                     </div>
                     <div className={styles.headerRow}>
                         <span className={styles.bold}>Select Dataset </span>
                         <span>
                             <div className={styles.rangeInputWrapper}>
-                                <input type="range" id="data-range" name="dataRange" min="50" max="100" value={range} onChange={rangeHandler}></input><span className={styles.rangeValueText}>{range + ' items'}</span>
+                                <input type="range" id="data-range" name="dataRange" min="50" max="300" value={range} onChange={rangeHandler}></input><span className={styles.rangeValueText}>{range + ' items'}</span>
                             </div>
                         </span>
                     </div>
@@ -227,7 +287,7 @@ const Sorting = () => {
                         <span className={styles.bold}>Slow down</span>
                         <span>
                             <div className={styles.rangeInputWrapper}>
-                                <input type="range" id="data-range" name="dataRange" min="1" max="10" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{(11 - timerIncrement) / 10 + 'x'}</span>
+                                <input type="range" id="data-range" name="dataRange" min="0" max="10" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{(11 - timerIncrement) / 10 + 'x'}</span>
                             </div>
                         </span>
                     </div>
@@ -243,7 +303,7 @@ const Sorting = () => {
                         {
                             sortData && sortData.map((ele, index) => {
                                 return (
-                                    <div key={index} ref={el => { elRefs.current[index] = el }} className={styles.row} style={{ height: ele + 'px' }}></div>
+                                    <div key={index} ref={el => { elRefs.current[index] = el }} className={styles.row} style={{ height: ele + 'px', color: defaultBackgroundColor }}></div>
                                 )
                             })
                         }
