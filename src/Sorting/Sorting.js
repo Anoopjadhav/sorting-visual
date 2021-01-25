@@ -6,7 +6,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import SortIcon from '@material-ui/icons/Sort';
 
-const defaultSortType = 'Merge'
+const defaultSortType = 'Bubble'
 const defaultBackgroundColor = "#2F80ED";
 const defaultSlowDown = 0;
 const defaultRange = 50;
@@ -270,48 +270,12 @@ const Sorting = () => {
 
     }
 
-    // function mergeSort(arr, animationObj, min, max) {
-
-    //     if (max - min < 2) return arr;
-
-    //     let mid = Math.floor(( max - min ) / 2);
-
-    //     console.log(min,min+mid,max);
-
-    //     let firstArr = mergeSort(arr, animationObj, min, min+mid);
-    //     let secondArr = mergeSort(arr, animationObj, min+mid, max);
-
-    //     let fl = mid - min ;
-    //     let sl = max - mid;
-
-    //     let i = min, j = mid;
-    //     let tempArr = [];
-
-    //     while (i < fl && j < sl) {
-    //         if (firstArr[i] < secondArr[j]) {
-    //             tempArr.push(firstArr[i++]);
-    //         } else if (firstArr[i] > secondArr[j]) {
-    //             tempArr.push(secondArr[j++]);
-    //         }
-    //     }
-
-    //     while (i < fl) {
-    //         tempArr.push(firstArr[i++]);
-    //     }
-    //     while (j < sl) {
-    //         tempArr.push(secondArr[j++]);
-    //     }
-
-    //     console.log(tempArr)
-    //     return tempArr;
-    // }
-
-    function mergeSort(arr, animationObj, min, max) {
+    function mergeSort(arr, animationObj) {
         if (arr.length < 2) return arr;
 
         let mid = Math.ceil(arr.length / 2);
 
-        let firstArr = arr.slice(min, mid);
+        let firstArr = arr.slice(0, mid);
         let secondArr = arr.slice(mid, arr.length);
 
         firstArr = mergeSort(firstArr, animationObj, );
@@ -407,7 +371,7 @@ const Sorting = () => {
         } else if (selectedSort === 'Merge') {
             // algoSortedData = mergeSort(testData);
             console.log(testData)
-            algoSortedData = mergeSort(testData,{},0, testData.length);
+            algoSortedData = mergeSort(testData);
 
         }
         // console.log(sortedData);
@@ -504,7 +468,7 @@ const Sorting = () => {
             </div>
             <div className={styles.footer}>
                 <div className={styles.sortTime}>
-                    <button onClick={testSort}>Test Sort</button>
+                    {/* <button onClick={testSort}>Test Sort</button> */}
                     <span>Time Taken by actual sort: </span> <span><b>{sortTime + ' milliseconds'}</b></span>
                 </div>
 
