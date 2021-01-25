@@ -5,6 +5,11 @@
     align-items: center;
     padding:1rem;
     background-color: #ECECEC;
+    justify-content: space-between;
+}
+.headerSec{
+    display:flex;
+    align-items: center;
 }
 .headerCombined{
     font-size: 0.8rem;
@@ -160,5 +165,30 @@ button:disabled{
     display:flex;
     align-items: center;
     padding-top:0.5rem
+}
+.mobileMenu{
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .page{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .headerCombined{
+        width:80%;
+        position: fixed;
+        box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+        z-index: 99999999;
+        left: -66%;
+        transition: 0.3s ease-in-out;
+    }
+    .sortVisual{
+        width:100%;
+    }
+    .mobileMenu{
+        display: block;
+    }
+
 }
 

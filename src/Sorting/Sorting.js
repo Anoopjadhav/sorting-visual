@@ -3,6 +3,7 @@ import styles from './Sorting.module.css'
 import './common.css'
 import getRandomValue from './randomValueGenerator'
 import RefreshIcon from '@material-ui/icons/Refresh';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import SortIcon from '@material-ui/icons/Sort';
 
 const defaultSortType = 'Bubble'
@@ -30,7 +31,7 @@ class animationClass {
                 // console.log('swap position');
                 //hightlight bg 
                 //swap element heights
-                this.queue.push(this.changeBgColorAndUpdateHeight(element1, value1, element2, value2,'yellow'))
+                this.queue.push(this.changeBgColorAndUpdateHeight(element1, value1, element2, value2, 'yellow'))
                 this.queue.push(this.changeBgColor(element1, this.defaultBgColor, element2, this.defaultBgColor))
                 return;
 
@@ -46,7 +47,7 @@ class animationClass {
 
             case 'updateHeightAndMarkSorted':
                 //swap element heights
-                this.queue.push(this.changeBgColorAndUpdateHeight(element1, value1, element2, value2,'#56CCF2'))
+                this.queue.push(this.changeBgColorAndUpdateHeight(element1, value1, element2, value2, '#56CCF2'))
                 return;
             case 'changeBgColorForAll':
                 //***IMP***element1 == elements && value1 == color as parameters
@@ -121,6 +122,8 @@ const Sorting = () => {
     let [timerIncrement, setTimerIncrement] = useState(0);
     let [animationObj, setAnimationObj] = useState();
     let elRefs = useRef([]);
+
+    let headerMobile = useRef();
 
     useEffect(() => {
         setSortTypes([
@@ -236,6 +239,7 @@ const Sorting = () => {
     }
 
     function startSort() {
+        toggleMenu(false);
         // console.log('sorting started')
         let selectedSort = getSelectedSort();
 
@@ -334,11 +338,34 @@ const Sorting = () => {
         return flag;
     }
 
+    function toggleMenu(value) {
+        let classList = headerMobile.current.classList;
+        if (value === true) {
+            headerMobile.current.classList.add('show')
+        } else if (value === false) {
+            headerMobile.current.classList.remove('show')
+        } else {
+            if (classList.contains('show')) {
+                headerMobile.current.classList.remove('show')
+            } else {
+                headerMobile.current.classList.add('show')
+            }
+        }
+    }
+
     return (
         <div className={styles.sortWrapper}>
             <div className={styles.page}>
-                <div className={styles.headerCombined}>
-                    <div className={styles.header}><SortIcon style={{ color: 'white', fontSize: 24 }}></SortIcon><span className={styles.headerIconLabel}>Sort Analysis Tool</span></div>
+                <div className={styles.headerCombined + ' show'} ref={headerMobile}>
+                    <div className={styles.header}>
+                        <div className={styles.headerSec}>
+                            <SortIcon style={{ color: 'white', fontSize: 24 }}></SortIcon>
+                            <span className={styles.headerIconLabel}>Sort Analysis Tool</span>
+                        </div>
+                        <div className={styles.mobileMenu + ' mobileMenu'} onClick={toggleMenu}>
+                            <ArrowForwardIosIcon style={{ color: 'white', fontSize: 18 }}></ArrowForwardIosIcon>
+                        </div>
+                    </div>
                     <div className={styles.headerRow}>
                         <div className={styles.bold}>
                             Select Sort Type

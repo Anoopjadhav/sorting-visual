@@ -23,3 +23,12 @@
     }
 }
 
+@media only screen and (max-width: 768px) {
+    .show{
+        left:0 !important;
+    }
+    .show .mobileMenu{
+        transform: rotate(180deg) !important;
+    }
+   
+}
