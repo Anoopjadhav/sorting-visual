@@ -20,7 +20,7 @@ class animationClass {
         this.animationDelay = animationDelay;
         this.queue = [];
     }
-    setDelay(animationDelay){
+    setDelay(animationDelay) {
         this.animationDelay = animationDelay;
     }
 
@@ -29,11 +29,9 @@ class animationClass {
             case 'swapPosition':
                 // console.log('swap position');
                 //hightlight bg 
-                this.queue.push(this.changeBgColor(element1, 'yellow', element2, 'yellow'))
-                this.queue.push(this.changeBgColor(element1, this.defaultBgColor, element2, this.defaultBgColor))
-
                 //swap element heights
-                this.queue.push(this.updateHeight(element1, value1, element2, value2));
+                this.queue.push(this.changeBgColorAndUpdateHeight(element1, value1, element2, value2,'yellow'))
+                this.queue.push(this.changeBgColor(element1, this.defaultBgColor, element2, this.defaultBgColor))
                 return;
 
             case 'changeBgColor':
@@ -48,8 +46,7 @@ class animationClass {
 
             case 'updateHeightAndMarkSorted':
                 //swap element heights
-                this.queue.push(this.updateHeight(element1, value1, element2, value2));
-                this.queue.push(this.changeBgColor(element1, '#56CCF2'));
+                this.queue.push(this.changeBgColorAndUpdateHeight(element1, value1, element2, value2,'#56CCF2'))
                 return;
             case 'changeBgColorForAll':
                 //***IMP***element1 == elements && value1 == color as parameters
@@ -64,6 +61,20 @@ class animationClass {
         }
     }
 
+    changeBgColorAndUpdateHeight(element1, value1, element2, value2, color) {
+        return () => {
+            if (element2 !== undefined) {
+                element2.style.backgroundColor = color;
+            }
+            if (element1 !== undefined)
+                element1.style.backgroundColor = color;
+
+            if (element1 !== undefined)
+                element1.style.height = value1 + 'px';
+            if (element2 !== undefined)
+                element2.style.height = value2 + 'px';
+        }
+    }
     changeBgColor(element1, color1, element2, color2) {
         return () => {
             if (element2 !== undefined) {
@@ -106,10 +117,9 @@ const Sorting = () => {
     let [selectedSort, setSelectedSort] = useState('');
     let [range, setRange] = useState(0);
     let [buttonDisabled, setButtonDisabled] = useState(false);
-    let [showDropDown, setShowDropDown] = useState(false);
     let [sortTime, setSortTime] = useState(0);
     let [timerIncrement, setTimerIncrement] = useState(0);
-    let [animationObj,setAnimationObj] = useState();
+    let [animationObj, setAnimationObj] = useState();
     let elRefs = useRef([]);
 
     useEffect(() => {
@@ -235,7 +245,7 @@ const Sorting = () => {
         let startTime = new Date();
 
         //init animation obj
-       
+
 
         if (selectedSort === 'Bubble') {
             bubbleSort(animationObj);
@@ -299,18 +309,6 @@ const Sorting = () => {
         return tempSortData
     }
 
-    function toggleDropDown() {
-        setShowDropDown(!showDropDown)
-    }
-
-    function closeDropDown(evt) {
-        let ele = evt.currentTarget;
-        let classList = [...ele.classList];
-
-        if (!(classList.includes('radio') || classList.includes('input'))) {
-            setShowDropDown(false)
-        }
-    }
     function testSort() {
 
         let sortedData = sortData.sort((a, b) => { return a - b });
@@ -338,68 +336,55 @@ const Sorting = () => {
 
     return (
         <div className={styles.sortWrapper}>
-            <div className={styles.headerCombined}>
-                <div className={styles.header}><SortIcon style={{ color: 'white', fontSize: 24 }}></SortIcon><span className={styles.iconLabel}>Sort Analysis</span></div>
-                <div className={styles.secHeader}>
+            <div className={styles.page}>
+                <div className={styles.headerCombined}>
+                    <div className={styles.header}><SortIcon style={{ color: 'white', fontSize: 24 }}></SortIcon><span className={styles.headerIconLabel}>Sort Analysis Tool</span></div>
                     <div className={styles.headerRow}>
-                        <span className={styles.bold} onClick={toggleDropDown}>
-                            <div>
-                                <span>Select Sort Type</span>
-                                <div className={styles.selectedSort}>{selectedSort}</div>
-                            </div>
-                            <div className={styles.arrow} data-class={showDropDown ? 'up' : 'down'}>^</div>
-                           
-                        </span>
-                        {
-                            showDropDown && <div className={styles.radioInputWrapper} >
-                                {
-                                    sortTypes && sortTypes.map((ele, index) => {
-                                        return (
-                                            <div key={index} className={styles.input + " input"} data-id={ele.name} onClick={handleSortSelectChange} onBlur={closeDropDown}>
-                                                <input className="radio" name="sort" type="radio" data-id={ele.name} value={ele.name} checked={ele.checked} onChange={handleSortSelectChange} onBlur={closeDropDown}></input><span>{ele.name}</span>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-
-                        }
+                        <div className={styles.bold}>
+                            Select Sort Type
+                    </div>
+                        <div className={styles.radioInputWrapper} >
+                            {
+                                sortTypes && sortTypes.map((ele, index) => {
+                                    return (
+                                        <div key={index} className={styles.input + " input"} data-id={ele.name} onClick={handleSortSelectChange} >
+                                            <input className="radio" name="sort" type="radio" data-id={ele.name} value={ele.name} checked={ele.checked} onChange={handleSortSelectChange}></input><span>{ele.name}</span>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
                     <div className={styles.headerRow}>
                         <span className={styles.bold}>Select Dataset </span>
 
                         <div className={styles.rangeInputWrapper}>
-                            <input type="range" id="data-range" name="dataRange" min="50" max="300" value={range} onChange={rangeHandler}></input><span className={styles.rangeValueText}>{range + ' items'}</span>
+                            <input type="range" id="data-range" name="dataRange" min="50" max="200" value={range} onChange={rangeHandler}></input><span className={styles.rangeValueText}>{range + ' items'}</span>
                         </div>
 
                     </div>
                     <div className={styles.headerRow}>
-                        <span className={styles.bold}>Animation Delay (ms)</span>
+                        <span className={styles.bold}>Animation Delay</span>
 
                         <div className={styles.rangeInputWrapper}>
-                            <input type="range" id="data-range" name="dataRange" min="0" max="100" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{timerIncrement}</span>
+                            <input type="range" id="data-range" name="dataRange" min="0" max="100" value={timerIncrement} onChange={slowDownRangeHandler}></input> <span className={styles.rangeValueText}>{timerIncrement + ' ms'}</span>
                         </div>
 
                     </div>
-                    <div className={styles.headerRow}>
+                    <div className={styles.buttonsWrapper}>
                         <button className={styles.buttonDestructive} onClick={resetData}><RefreshIcon style={{ color: 'white', fontSize: 16 }}></RefreshIcon><span className={styles.iconLabel}>Reset</span></button>
                         <button onClick={startSort} disabled={buttonDisabled}>Start Sorting</button>
                     </div>
                 </div>
-            </div>
-            <div>
-                <div className={styles.body}>
-                    <div className={styles.sortVisual}>
-                        {
-                            sortData && sortData.map((ele, index) => {
-                                return (
-                                    <div key={index} ref={el => { elRefs.current[index] = el }} className={styles.row} style={{ height: ele + 'px', color: defaultBackgroundColor }}></div>
-                                )
-                            })
-                        }
-                    </div>
+                <div className={styles.sortVisual}>
+                    {
+                        sortData && sortData.map((ele, index) => {
+                            return (
+                                <div key={index} ref={el => { elRefs.current[index] = el }} className={styles.row} style={{ height: ele + 'px', color: defaultBackgroundColor }}></div>
+                            )
+                        })
+                    }
                 </div>
-
             </div>
             <div className={styles.footer}>
                 <div className={styles.sortTime}>

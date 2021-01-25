@@ -1,6 +1,6 @@
 function* getRandomValueFun(){
     while(true){
-        let randomValue = Math.floor(Math.random() * 500);
+        let randomValue = Math.floor(Math.random() * 600);
         yield(randomValue);
     }
 }
