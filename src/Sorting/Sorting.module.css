@@ -189,6 +189,9 @@ button:disabled{
     .mobileMenu{
         display: block;
     }
-
+    .buttonsWrapper{
+        /* top: 75vH; */
+        bottom:1rem;
+    }
 }
 
