@@ -190,8 +190,10 @@ button:disabled{
         display: block;
     }
     .buttonsWrapper{
-        /* top: 75vH; */
-        bottom:4rem;
+        padding-top:4rem;
+        position: relative;
+        top:0;
+        left:0;
     }
 }
 
