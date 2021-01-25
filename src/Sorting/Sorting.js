@@ -136,14 +136,7 @@ const Sorting = () => {
                 checked: false
             },
             {
-                name: 'Selection',
-                checked: false
-            },
-            {
                 name: 'Merge',
-                checked: false
-            }, {
-                name: 'Quick',
                 checked: false
             }
         ])
@@ -214,6 +207,7 @@ const Sorting = () => {
         }
 
         setSortData(sortData);
+        setAnimationObj(new animationClass(timerIncrement));
 
         for (let i = 0; i < elRefs.current.length; i++) {
             if (elRefs.current[i])
