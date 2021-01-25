@@ -6,7 +6,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import SortIcon from '@material-ui/icons/Sort';
 
-const defaultSortType = 'Bubble'
+const defaultSortType = 'Merge'
 const defaultBackgroundColor = "#2F80ED";
 const defaultSlowDown = 0;
 const defaultRange = 50;
@@ -64,24 +64,24 @@ class animationClass {
 
     changeBgColorAndUpdateHeight(element1, value1, element2, value2, color) {
         return () => {
-            if (element2 !== undefined) {
+            if (element2) {
                 element2.style.backgroundColor = color;
             }
-            if (element1 !== undefined)
+            if (element1)
                 element1.style.backgroundColor = color;
 
-            if (element1 !== undefined)
+            if (element1)
                 element1.style.height = value1 + 'px';
-            if (element2 !== undefined)
+            if (element2)
                 element2.style.height = value2 + 'px';
         }
     }
     changeBgColor(element1, color1, element2, color2) {
         return () => {
-            if (element2 !== undefined) {
+            if (element2) {
                 element2.style.backgroundColor = color2;
             }
-            if (element1 !== undefined)
+            if (element1)
                 element1.style.backgroundColor = color1;
         }
     }
@@ -89,9 +89,9 @@ class animationClass {
     updateHeight(element1, value1, element2, value2) {
         return () => {
             // console.log('Height Changed')
-            if (element1 !== undefined)
+            if (element1)
                 element1.style.height = value1 + 'px';
-            if (element2 !== undefined)
+            if (element2)
                 element2.style.height = value2 + 'px';
         }
     }
@@ -126,10 +126,18 @@ const Sorting = () => {
     let headerMobile = useRef();
 
     useEffect(() => {
-        setSortTypes([
+        setDefaultSort();
+        setRange(defaultRange);
+        setButtonDisabled(false);
+        setTimerIncrement(defaultSlowDown);
+        setAnimationObj(new animationClass(timerIncrement));
+    }, [])
+
+    function setDefaultSort() {
+        let sortTypesTemp = [
             {
                 name: 'Bubble',
-                checked: true
+                checked: false
             },
             {
                 name: 'Insertion',
@@ -139,17 +147,18 @@ const Sorting = () => {
                 name: 'Merge',
                 checked: false
             }
-        ])
+        ];
+        sortTypesTemp.forEach(ele => {
+            if (ele.name === defaultSortType)
+                ele.checked = true;
+            else
+                ele.checked = false;
 
-        setRange(defaultRange);
-        setButtonDisabled(false);
-        setTimerIncrement(defaultSlowDown);
+        })
 
+        setSortTypes(sortTypesTemp);
         setSelectedSort(defaultSortType);
-        setAnimationObj(new animationClass(timerIncrement));
-
-    }, [])
-
+    }
     useEffect(() => {
         resetData();
         setSortTime(0);
@@ -188,7 +197,6 @@ const Sorting = () => {
 
         resetData();
     }
-
     function slowDownRangeHandler(evt) {
         let targetValue = evt.currentTarget.value;
         setTimerIncrement(parseInt(targetValue));
@@ -198,7 +206,6 @@ const Sorting = () => {
 
         setAnimationObj(tempAnimationObj);
     }
-
     function resetData() {
         let sortData = [];
         for (let i = 0; i < range; i++) {
@@ -221,7 +228,6 @@ const Sorting = () => {
             window.clearTimeout(id); // will do nothing if no timeout with id is present
         }
     }
-
     function getSelectedSort() {
         let selectedSort = '';
         sortTypes.forEach(ele => {
@@ -231,7 +237,6 @@ const Sorting = () => {
         });
         return selectedSort;
     }
-
     function startSort() {
         toggleMenu(false);
         // console.log('sorting started')
@@ -246,10 +251,15 @@ const Sorting = () => {
 
 
         if (selectedSort === 'Bubble') {
-            bubbleSort(animationObj);
+            let tempSortData = [...sortData];
+            bubbleSort(tempSortData, animationObj);
         } else if (selectedSort === 'Insertion') {
-            insertionSort(animationObj);
+            let tempSortData = [...sortData];
+            insertionSort(tempSortData, animationObj);
             animationObj.addAnimation('changeBgColorForAll', elRefs.current, '#56CCF2')
+        } else if (selectedSort === 'Merge') {
+            let tempSortData = [...sortData];
+            mergeSort(tempSortData, animationObj);
         }
 
         let endTime = new Date();
@@ -260,8 +270,81 @@ const Sorting = () => {
 
     }
 
-    function bubbleSort(animationObj) {
-        let tempSortData = [...sortData];
+    // function mergeSort(arr, animationObj, min, max) {
+
+    //     if (max - min < 2) return arr;
+
+    //     let mid = Math.floor(( max - min ) / 2);
+
+    //     console.log(min,min+mid,max);
+
+    //     let firstArr = mergeSort(arr, animationObj, min, min+mid);
+    //     let secondArr = mergeSort(arr, animationObj, min+mid, max);
+
+    //     let fl = mid - min ;
+    //     let sl = max - mid;
+
+    //     let i = min, j = mid;
+    //     let tempArr = [];
+
+    //     while (i < fl && j < sl) {
+    //         if (firstArr[i] < secondArr[j]) {
+    //             tempArr.push(firstArr[i++]);
+    //         } else if (firstArr[i] > secondArr[j]) {
+    //             tempArr.push(secondArr[j++]);
+    //         }
+    //     }
+
+    //     while (i < fl) {
+    //         tempArr.push(firstArr[i++]);
+    //     }
+    //     while (j < sl) {
+    //         tempArr.push(secondArr[j++]);
+    //     }
+
+    //     console.log(tempArr)
+    //     return tempArr;
+    // }
+
+    function mergeSort(arr, animationObj, min, max) {
+        if (arr.length < 2) return arr;
+
+        let mid = Math.ceil(arr.length / 2);
+
+        let firstArr = arr.slice(min, mid);
+        let secondArr = arr.slice(mid, arr.length);
+
+        firstArr = mergeSort(firstArr, animationObj, );
+        secondArr = mergeSort(secondArr, animationObj);
+
+        let fl = firstArr.length;
+        let sl = secondArr.length;
+
+        let i = 0, j = 0;
+        let tempArr = [];
+
+        while (i < fl && j < sl) {
+            if (firstArr[i] < secondArr[j]) {
+                tempArr.push(firstArr[i++]);
+            } else if (firstArr[i] > secondArr[j]) {
+                tempArr.push(secondArr[j++]);
+            }
+        }
+
+        while (i < fl) {
+            tempArr.push(firstArr[i++]);
+        }
+        while (j < sl) {
+            tempArr.push(secondArr[j++]);
+        }
+
+        console.log(tempArr)
+        return tempArr;
+    }
+
+
+    function bubbleSort(tempSortData, animationObj) {
+
         for (let i = 0; i < tempSortData.length; i++) {
             let j = 0;
             for (j = 0; j < tempSortData.length - i; j++) {
@@ -284,8 +367,7 @@ const Sorting = () => {
         return tempSortData;
     }
 
-    function insertionSort(animationObj) {
-        let tempSortData = [...sortData];
+    function insertionSort(tempSortData, animationObj) {
 
         for (let i = 1; i < tempSortData.length; i++) {
 
@@ -307,17 +389,30 @@ const Sorting = () => {
         return tempSortData
     }
 
+
     function testSort() {
 
-        let sortedData = sortData.sort((a, b) => { return a - b });
+        let testData = [3, 2, 1, 5, 6];
+        // let testData = [3, 2, 1, 0, 5, 6, 7, 10, 11, 1232, 2323, 45454, 4544544, 223232];
+        // let testData = [...sortData];
+
+        let sortedData = testData.sort((a, b) => { return a - b });
 
         let algoSortedData = [];
         if (selectedSort === 'Bubble') {
-            algoSortedData = bubbleSort();
+            algoSortedData = bubbleSort(testData);
         } else if (selectedSort === 'Insertion') {
-            algoSortedData = insertionSort();
-            console.log(algoSortedData)
+            algoSortedData = insertionSort(testData);
+
+        } else if (selectedSort === 'Merge') {
+            // algoSortedData = mergeSort(testData);
+            console.log(testData)
+            algoSortedData = mergeSort(testData,{},0, testData.length);
+
         }
+        // console.log(sortedData);
+        console.log(algoSortedData)
+
 
         let result = checkIfArrEqual(sortedData, algoSortedData);
         alert(result);
@@ -409,7 +504,7 @@ const Sorting = () => {
             </div>
             <div className={styles.footer}>
                 <div className={styles.sortTime}>
-                    {/* <button onClick={testSort}>Test Sort</button> */}
+                    <button onClick={testSort}>Test Sort</button>
                     <span>Time Taken by actual sort: </span> <span><b>{sortTime + ' milliseconds'}</b></span>
                 </div>
 
